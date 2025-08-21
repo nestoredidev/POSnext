@@ -35,11 +35,11 @@ const ShoppingCartContentScheme = ProductSchema.pick({
 
 
 export const CouponResponseSchema = z.object({
-    status: z.number(),
     name: z.string().default(''),
     message: z.string(),
     percentage: z.coerce.number().min(0).max(100).default(0),
 });
+
 
 export const ShoppingCartSchema = z.array(ShoppingCartContentScheme)
 
@@ -94,6 +94,14 @@ export const ProductsResponseSchema = z.object({
     total: z.number(),
 })
 
+export const CouponResponseDataSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    percentage: z.coerce.number().min(0).max(100).default(0),
+    expirationDate: z.string().optional(),
+});
+export const CouponsResponseSchema = z.array(CouponResponseDataSchema);
+
 export interface ProductById {
     id: number;
     name: string;
@@ -120,6 +128,7 @@ export type ShoppingCart = z.infer<typeof ShoppingCartContentScheme>
 
 export  type  Coupon = z.infer<typeof CouponResponseSchema>;
 
+
 export type Transaction = z.infer<typeof TransactionResponseSchema>
 
 export const ProductFormSchema = z.object({
@@ -131,4 +140,13 @@ export const ProductFormSchema = z.object({
     inventory: z.coerce.number({message: 'Inventario no válido'})
         .min(1, {message: 'El inventario debe ser mayor a 0'}),
     categoryId: z.coerce.number({message: 'La Categoria no es válida'})
+})
+export const CouponFormSchema = z.object({
+    name: z.string().min(3, {message: 'El Nombre del Cupón no puede ir vacio'}).toUpperCase(),
+    percentage: z.coerce.number({message: 'El Porcentaje no es válido'})
+        .min(0, {message: 'El Porcentaje debe ser mayor o igual a 0'})
+        .max(100, {message: 'El Porcentaje debe ser menor o igual a 100'}),
+    expirationDate: z.string().refine((date) => new Date(date) > new Date(), {
+        message: 'La fecha de expiración debe ser posterior a la fecha actual'
+    })
 })

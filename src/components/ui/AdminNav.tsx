@@ -18,6 +18,10 @@ export default function AdminNav() {
                     href={'/admin/sales'}
                     className="rounded text-white font-bold p-2 hover:text-secondary"
                 >Ventas</Link>
+                <Link
+                    href={'/admin/coupon'}
+                    className="rounded text-white font-bold p-2 hover:text-secondary"
+                >Cupones</Link>
 
                 <Link
                     href={'/'}

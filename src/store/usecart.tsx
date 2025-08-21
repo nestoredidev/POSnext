@@ -5,6 +5,7 @@ import {
     Product,
     ShoppingCart
 } from "@/types/shemas";
+import {ApplyCoupon} from "@/actions/cupons-action";
 
 interface Store {
     total: number;
@@ -96,18 +97,26 @@ export const useCartStore = create<Store>((set, get) => ({
         }
     },
     applyCoupon: async (couponName) => {
-        const req = await fetch('/coupon/api', {
-            method: 'POST',
-            body: JSON.stringify({
-                coupon_name: couponName
-            })
-        })
-        const response = await req.json();
-        const coupon = CouponResponseSchema.parse(response);
+        const req = await ApplyCoupon(couponName);
+
+        if (req.error) {
+            set(() => ({
+                coupon: {
+                    percentage: 0,
+                    name: '',
+                    message: req.error,
+                    status: 400
+                }
+            }));
+            return;
+        }
+        const json = await req.data;
+        const coupon = CouponResponseSchema.parse(json);
         set(() => ({
             coupon
         }))
-        if (coupon.percentage) {
+
+        if (coupon.percentage > 0) {
             get().applyDiscount();
         }
     },

@@ -6,6 +6,6 @@ export async function GET(req: NextRequest) {
     const url = `${process.env.API_URL}/transactions?transactionDate=${trasactionDate}`;
     const res = await fetch(url)
     const response = await res.json();
-    console.log(response)
+    // console.log(response)
     return Response.json(response)
 }
